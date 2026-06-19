@@ -1,4 +1,5 @@
-import { LayoutDashboard, Settings, GitBranch, BookOpen, Skull, AlertTriangle } from 'lucide-react';
+import { useState } from 'react';
+import { LayoutDashboard, Settings, GitBranch, BookOpen, Skull, AlertTriangle, FolderOpen, Loader2 } from 'lucide-react';
 import { useBibleStore } from '../lib/store';
 
 const navItems = [
@@ -9,7 +10,8 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const { activeNav, setActiveNav, bible } = useBibleStore();
+  const { activeNav, setActiveNav, bible, savedBibles, isSaving, setBible } = useBibleStore();
+  const [showLoadMenu, setShowLoadMenu] = useState(false);
 
   const conflictCount = bible.stations.filter(
     (s) => s.resetTimeMinutes >= bible.parameters.dispatchIntervalMinutes
@@ -63,7 +65,33 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-slate-800">
+      <div className="p-4 border-t border-slate-800 space-y-3">
+        {savedBibles.length > 0 && (
+          <div className="relative">
+            <button
+              onClick={() => setShowLoadMenu((v) => !v)}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-950/50 hover:bg-violet-950/80 border border-violet-700/40 text-violet-400 text-xs font-semibold transition-colors"
+            >
+              <FolderOpen size={12} />
+              Load Saved ({savedBibles.length})
+            </button>
+            {showLoadMenu && (
+              <div className="absolute bottom-full left-0 mb-1 w-full z-50 rounded-xl border border-slate-700 bg-slate-900 shadow-xl py-1">
+                {savedBibles.map((meta) => (
+                  <button
+                    key={meta.id}
+                    onClick={() => { setBible(meta.bible); setShowLoadMenu(false); }}
+                    className="w-full text-left px-3 py-2 hover:bg-slate-800 transition-colors"
+                  >
+                    <div className="text-xs text-white font-medium truncate">{meta.title || 'Untitled Production'}</div>
+                    <div className="text-xs text-slate-500 mt-0.5">{new Date(meta.savedAt).toLocaleDateString()}</div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="text-xs text-slate-600 space-y-1">
           <div className="flex justify-between">
             <span>Stations</span>
@@ -77,6 +105,12 @@ export default function Sidebar() {
             <span>Dispatch</span>
             <span className="text-slate-400">/{bible.parameters.dispatchIntervalMinutes} min</span>
           </div>
+          {isSaving && (
+            <div className="flex items-center gap-1.5 text-slate-500 pt-1">
+              <Loader2 size={10} className="animate-spin" />
+              <span>Saving…</span>
+            </div>
+          )}
         </div>
       </div>
     </aside>

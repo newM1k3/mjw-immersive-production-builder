@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { ProductionBible, ProjectParameters, Station } from './types';
+import type { SavedBibleMeta } from './pocketbase';
 
 const dummyBible: ProductionBible = {
   parameters: {
@@ -116,7 +117,12 @@ const dummyBible: ProductionBible = {
 interface BibleStore {
   bible: ProductionBible;
   activeNav: string;
+  savedBibles: SavedBibleMeta[];
+  isSaving: boolean;
   setActiveNav: (nav: string) => void;
+  setBible: (bible: ProductionBible) => void;
+  setSavedBibles: (bibles: SavedBibleMeta[]) => void;
+  setIsSaving: (saving: boolean) => void;
   updateParameters: (params: Partial<ProjectParameters>) => void;
   addStation: () => void;
   updateStation: (id: string, updates: Partial<Station>) => void;
@@ -127,8 +133,13 @@ interface BibleStore {
 export const useBibleStore = create<BibleStore>((set) => ({
   bible: dummyBible,
   activeNav: 'dashboard',
+  savedBibles: [],
+  isSaving: false,
 
   setActiveNav: (nav) => set({ activeNav: nav }),
+  setBible: (bible) => set({ bible }),
+  setSavedBibles: (savedBibles) => set({ savedBibles }),
+  setIsSaving: (isSaving) => set({ isSaving }),
 
   updateParameters: (params) =>
     set((state) => ({
