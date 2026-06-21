@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { ProductionBible, ProjectParameters, Station } from './types';
-import type { SavedBibleMeta } from './pocketbase';
+import type { RoomContext } from './production';
 
 const dummyBible: ProductionBible = {
   parameters: {
@@ -117,11 +117,13 @@ const dummyBible: ProductionBible = {
 interface BibleStore {
   bible: ProductionBible;
   activeNav: string;
-  savedBibles: SavedBibleMeta[];
+  roomCtx: RoomContext | null;
+  activeRoomId: string | null;
   isSaving: boolean;
   setActiveNav: (nav: string) => void;
   setBible: (bible: ProductionBible) => void;
-  setSavedBibles: (bibles: SavedBibleMeta[]) => void;
+  setRoomCtx: (ctx: RoomContext | null) => void;
+  setActiveRoomId: (id: string | null) => void;
   setIsSaving: (saving: boolean) => void;
   updateParameters: (params: Partial<ProjectParameters>) => void;
   addStation: () => void;
@@ -133,12 +135,14 @@ interface BibleStore {
 export const useBibleStore = create<BibleStore>((set) => ({
   bible: dummyBible,
   activeNav: 'dashboard',
-  savedBibles: [],
+  roomCtx: null,
+  activeRoomId: null,
   isSaving: false,
 
   setActiveNav: (nav) => set({ activeNav: nav }),
   setBible: (bible) => set({ bible }),
-  setSavedBibles: (savedBibles) => set({ savedBibles }),
+  setRoomCtx: (roomCtx) => set({ roomCtx }),
+  setActiveRoomId: (activeRoomId) => set({ activeRoomId }),
   setIsSaving: (isSaving) => set({ isSaving }),
 
   updateParameters: (params) =>

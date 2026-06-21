@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { LayoutDashboard, Settings, GitBranch, BookOpen, Skull, AlertTriangle, FolderOpen, Loader2 } from 'lucide-react';
+import { LayoutDashboard, Settings, GitBranch, BookOpen, Skull, AlertTriangle, DoorOpen, Loader2 } from 'lucide-react';
 import { useBibleStore } from '../lib/store';
+import { loadProduction, type RoomOption } from '../lib/production';
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, sub: 'Health & Conflicts' },
@@ -10,8 +11,14 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const { activeNav, setActiveNav, bible, savedBibles, isSaving, setBible } = useBibleStore();
+  const { activeNav, setActiveNav, bible, roomCtx, activeRoomId, isSaving, setBible, setActiveRoomId } = useBibleStore();
   const [showLoadMenu, setShowLoadMenu] = useState(false);
+
+  const selectRoom = async (room: RoomOption) => {
+    setActiveRoomId(room.id);
+    setBible(await loadProduction(room));
+    setShowLoadMenu(false);
+  };
 
   const conflictCount = bible.stations.filter(
     (s) => s.resetTimeMinutes >= bible.parameters.dispatchIntervalMinutes
@@ -66,25 +73,25 @@ export default function Sidebar() {
       </nav>
 
       <div className="p-4 border-t border-slate-800 space-y-3">
-        {savedBibles.length > 0 && (
+        {roomCtx && roomCtx.rooms.length > 0 && (
           <div className="relative">
             <button
               onClick={() => setShowLoadMenu((v) => !v)}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-950/50 hover:bg-violet-950/80 border border-violet-700/40 text-violet-400 text-xs font-semibold transition-colors"
             >
-              <FolderOpen size={12} />
-              Load Saved ({savedBibles.length})
+              <DoorOpen size={12} />
+              Rooms ({roomCtx.rooms.length})
             </button>
             {showLoadMenu && (
               <div className="absolute bottom-full left-0 mb-1 w-full z-50 rounded-xl border border-slate-700 bg-slate-900 shadow-xl py-1">
-                {savedBibles.map((meta) => (
+                {roomCtx.rooms.map((room) => (
                   <button
-                    key={meta.id}
-                    onClick={() => { setBible(meta.bible); setShowLoadMenu(false); }}
-                    className="w-full text-left px-3 py-2 hover:bg-slate-800 transition-colors"
+                    key={room.id}
+                    onClick={() => void selectRoom(room)}
+                    className={`w-full text-left px-3 py-2 transition-colors ${room.id === activeRoomId ? 'bg-violet-950/40' : 'hover:bg-slate-800'}`}
                   >
-                    <div className="text-xs text-white font-medium truncate">{meta.title || 'Untitled Production'}</div>
-                    <div className="text-xs text-slate-500 mt-0.5">{new Date(meta.savedAt).toLocaleDateString()}</div>
+                    <div className={`text-xs font-medium truncate ${room.id === activeRoomId ? 'text-violet-300' : 'text-white'}`}>{room.title}</div>
+                    {room.id === activeRoomId && <div className="text-xs text-violet-400 mt-0.5">Active</div>}
                   </button>
                 ))}
               </div>
