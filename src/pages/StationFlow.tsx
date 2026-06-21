@@ -411,9 +411,9 @@ export default function StationFlow() {
           <button
             onClick={() => {
               addStation();
-              const newId = `station-${Date.now()}`;
               setTimeout(() => {
-                const last = useBibleStore.getState().bible.stations.at(-1);
+                const stations = useBibleStore.getState().bible.stations;
+                const last = stations[stations.length - 1];
                 if (last) setSelectedId(last.id);
               }, 50);
             }}
