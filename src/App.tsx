@@ -5,12 +5,13 @@ import CoreParameters from './pages/CoreParameters';
 import StationFlow from './pages/StationFlow';
 import ExportBible from './pages/ExportBible';
 import { useBibleStore } from './lib/store';
-import { pb, saveProject, loadProjects } from './lib/pocketbase';
+import { pb } from './lib/pocketbase';
+import { resolveRoomContext, loadProduction, saveProduction } from './lib/production';
 
 export default function App() {
-  const { activeNav, bible, setIsSaving, setSavedBibles } = useBibleStore();
+  const { activeNav, bible, roomCtx, activeRoomId, setIsSaving, setBible, setRoomCtx, setActiveRoomId } = useBibleStore();
 
-  // SSO token handoff + load saved bibles on mount
+  // SSO token handoff + resolve the venue's rooms, then load the active room's bible.
   useEffect(() => {
     async function initApp() {
       const params = new URLSearchParams(window.location.search);
@@ -22,29 +23,36 @@ export default function App() {
         } catch {
           pb.authStore.clear();
         }
-        window.history.replaceState({}, '', window.location.pathname);
       }
+      // Optional ?room= deep-link (forward-compatible with the dash launcher).
+      const roomParam = params.get('room');
+      window.history.replaceState({}, '', window.location.pathname);
 
-      const bibles = await loadProjects();
-      setSavedBibles(bibles);
+      const resolved = await resolveRoomContext();
+      if (!resolved) return; // not signed in / no venue → stays on the demo bible
+      setRoomCtx(resolved);
+
+      const room = resolved.rooms.find((r) => r.id === roomParam) ?? resolved.rooms[0] ?? null;
+      if (room) {
+        setActiveRoomId(room.id);
+        setBible(await loadProduction(room));
+      }
     }
     void initApp();
-  }, [setSavedBibles]);
+  }, [setRoomCtx, setActiveRoomId, setBible]);
 
   // Auto-save when navigating to the export page
   const persistBible = useCallback(async () => {
-    if (!pb.authStore.isValid) return;
+    if (!pb.authStore.isValid || !roomCtx || !activeRoomId) return;
     setIsSaving(true);
     try {
-      await saveProject(bible);
-      const refreshed = await loadProjects();
-      setSavedBibles(refreshed);
+      await saveProduction(roomCtx, activeRoomId, bible);
     } catch (err) {
       console.warn('Production Bible Builder: save failed', err);
     } finally {
       setIsSaving(false);
     }
-  }, [bible, setIsSaving, setSavedBibles]);
+  }, [bible, roomCtx, activeRoomId, setIsSaving]);
 
   useEffect(() => {
     if (activeNav === 'export') {
