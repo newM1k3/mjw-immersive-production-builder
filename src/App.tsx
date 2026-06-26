@@ -10,7 +10,7 @@ import { pb } from './lib/pocketbase';
 import { resolveRoomContext, loadProduction, saveProduction } from './lib/production';
 
 export default function App() {
-  const { activeNav, bible, roomCtx, activeRoomId, setIsSaving, setBible, setRoomCtx, setActiveRoomId } = useBibleStore();
+  const { activeNav, bible, roomCtx, activeRoomId, setIsSaving, setBible, setRoomCtx, setActiveRoomId, setActiveNav } = useBibleStore();
 
   // SSO token handoff + resolve the venue's rooms, then load the active room's bible.
   useEffect(() => {
@@ -25,6 +25,10 @@ export default function App() {
           pb.authStore.clear();
         }
       }
+      // A token means this is a dashboard launch, not an organic visit — drop the
+      // user straight into the builder rather than the marketing landing page.
+      if (token) setActiveNav('dashboard');
+
       // Optional ?room= deep-link (forward-compatible with the dash launcher).
       const roomParam = params.get('room');
       window.history.replaceState({}, '', window.location.pathname);
@@ -32,6 +36,7 @@ export default function App() {
       const resolved = await resolveRoomContext();
       if (!resolved) return; // not signed in / no venue → stays on the demo bible
       setRoomCtx(resolved);
+      setActiveNav('dashboard'); // already authed (cookie session) → skip landing
 
       const room = resolved.rooms.find((r) => r.id === roomParam) ?? resolved.rooms[0] ?? null;
       if (room) {
@@ -40,7 +45,7 @@ export default function App() {
       }
     }
     void initApp();
-  }, [setRoomCtx, setActiveRoomId, setBible]);
+  }, [setRoomCtx, setActiveRoomId, setBible, setActiveNav]);
 
   // Auto-save when navigating to the export page
   const persistBible = useCallback(async () => {
