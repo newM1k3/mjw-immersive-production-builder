@@ -134,7 +134,7 @@ interface BibleStore {
 
 export const useBibleStore = create<BibleStore>((set) => ({
   bible: dummyBible,
-  activeNav: 'dashboard',
+  activeNav: 'landing',
   roomCtx: null,
   activeRoomId: null,
   isSaving: false,

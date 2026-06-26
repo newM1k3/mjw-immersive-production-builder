@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Settings, GitBranch, BookOpen, Skull, AlertTriangle, DoorOpen, Loader2 } from 'lucide-react';
+import { LayoutDashboard, Settings, GitBranch, BookOpen, Skull, AlertTriangle, DoorOpen, Loader2, Home } from 'lucide-react';
 import { useBibleStore } from '../lib/store';
 import { loadProduction, type RoomOption } from '../lib/production';
 
@@ -98,6 +98,14 @@ export default function Sidebar() {
             )}
           </div>
         )}
+
+        <button
+          onClick={() => setActiveNav('landing')}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-900 text-xs transition-colors"
+        >
+          <Home size={12} />
+          Back to Home
+        </button>
 
         <div className="text-xs text-slate-600 space-y-1">
           <div className="flex justify-between">

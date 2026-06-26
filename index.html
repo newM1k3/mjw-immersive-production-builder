@@ -4,10 +4,83 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Immersive Production Builder</title>
-    <meta property="og:image" content="https://bolt.new/static/og_default.png" />
+    <!-- Primary SEO -->
+    <title>Immersive Production Builder | Escape Room Design &amp; Operations Tool</title>
+    <meta name="description" content="Build a complete Production Bible for your escape room or immersive experience. Design station flow, detect operational bottlenecks, and export a unified production document for your full team." />
+    <link rel="canonical" href="https://www.blueprint.immersivekit.ca/" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph (Facebook, LinkedIn, Discord) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.blueprint.immersivekit.ca/" />
+    <meta property="og:title" content="Immersive Production Builder | Escape Room Design &amp; Operations Tool" />
+    <meta property="og:description" content="Build a complete Production Bible for your escape room or immersive experience. Design station flow, detect operational bottlenecks, and export a unified production document for your full team." />
+    <meta property="og:image" content="https://www.blueprint.immersivekit.ca/og-image.png" />
+    <meta property="og:site_name" content="ImmersiveKit Blueprint" />
+
+    <!-- Twitter / X Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://bolt.new/static/og_default.png" />
+    <meta name="twitter:url" content="https://www.blueprint.immersivekit.ca/" />
+    <meta name="twitter:title" content="Immersive Production Builder | Escape Room Design &amp; Operations Tool" />
+    <meta name="twitter:description" content="Build a complete Production Bible for your escape room or immersive experience. Design station flow, detect operational bottlenecks, and export a unified production document." />
+    <meta name="twitter:image" content="https://www.blueprint.immersivekit.ca/og-image.png" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.immersivekit.ca/#organization",
+          "name": "ImmersiveKit",
+          "url": "https://www.immersivekit.ca/",
+          "description": "Tools and resources for escape room designers and immersive experience creators."
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.blueprint.immersivekit.ca/#website",
+          "url": "https://www.blueprint.immersivekit.ca/",
+          "name": "ImmersiveKit Blueprint",
+          "publisher": {
+            "@id": "https://www.immersivekit.ca/#organization"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://www.blueprint.immersivekit.ca/#application",
+          "name": "Immersive Production Builder",
+          "url": "https://www.blueprint.immersivekit.ca/",
+          "description": "A comprehensive production design and operational bottleneck analysis tool for escape rooms and immersive experiences. Build station flow, detect reset-time conflicts, and export a full Production Bible.",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "browserRequirements": "Requires JavaScript",
+          "isPartOf": {
+            "@id": "https://www.blueprint.immersivekit.ca/#website"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "publisher": {
+            "@id": "https://www.immersivekit.ca/#organization"
+          },
+          "featureList": [
+            "Operational bottleneck detection",
+            "Station flow and scene architecture planning",
+            "Three-lens design framework (Storyteller, Director, Operations)",
+            "Production Bible export as unified document",
+            "JSON export for team sharing"
+          ],
+          "audience": {
+            "@type": "Audience",
+            "audienceType": "Escape room designers, immersive experience producers, game masters"
+          }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

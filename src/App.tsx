@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
+import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import CoreParameters from './pages/CoreParameters';
 import StationFlow from './pages/StationFlow';
@@ -60,6 +61,11 @@ export default function App() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeNav]);
+
+  // Show the landing page without the sidebar
+  if (activeNav === 'landing') {
+    return <LandingPage />;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-950 text-white">
