@@ -1,27 +1,27 @@
 import { useState } from 'react';
 import { LayoutDashboard, Settings, GitBranch, BookOpen, Skull, AlertTriangle, DoorOpen, Loader2, Home } from 'lucide-react';
-import { useBibleStore } from '../lib/store';
+import { usePlaybookStore } from '../lib/store';
 import { loadProduction, type RoomOption } from '../lib/production';
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, sub: 'Health & Conflicts' },
   { id: 'parameters', label: 'Core Parameters', icon: Settings, sub: 'Global Settings' },
   { id: 'station-flow', label: 'Station Flow', icon: GitBranch, sub: 'Scene Architecture' },
-  { id: 'export', label: 'Export Bible', icon: BookOpen, sub: 'Full Production Doc' },
+  { id: 'export', label: 'Export Playbook', icon: BookOpen, sub: 'Full Production Doc' },
 ];
 
 export default function Sidebar() {
-  const { activeNav, setActiveNav, bible, roomCtx, activeRoomId, isSaving, setBible, setActiveRoomId } = useBibleStore();
+  const { activeNav, setActiveNav, playbook, roomCtx, activeRoomId, isSaving, setPlaybook, setActiveRoomId } = usePlaybookStore();
   const [showLoadMenu, setShowLoadMenu] = useState(false);
 
   const selectRoom = async (room: RoomOption) => {
     setActiveRoomId(room.id);
-    setBible(await loadProduction(room));
+    setPlaybook(await loadProduction(room));
     setShowLoadMenu(false);
   };
 
-  const conflictCount = bible.stations.filter(
-    (s) => s.resetTimeMinutes >= bible.parameters.dispatchIntervalMinutes
+  const conflictCount = playbook.stations.filter(
+    (s) => s.resetTimeMinutes >= playbook.parameters.dispatchIntervalMinutes
   ).length;
 
   return (
@@ -29,9 +29,9 @@ export default function Sidebar() {
       <div className="p-5 border-b border-slate-800">
         <div className="flex items-center gap-2.5 mb-1">
           <Skull className="text-rose-500" size={20} />
-          <span className="text-white font-bold text-sm tracking-widest uppercase">Production Bible</span>
+          <span className="text-white font-bold text-sm tracking-widest uppercase">Production Playbook</span>
         </div>
-        <p className="text-slate-500 text-xs truncate pl-7">{bible.parameters.title}</p>
+        <p className="text-slate-500 text-xs truncate pl-7">{playbook.parameters.title}</p>
       </div>
 
       {conflictCount > 0 && (
@@ -110,15 +110,15 @@ export default function Sidebar() {
         <div className="text-xs text-slate-600 space-y-1">
           <div className="flex justify-between">
             <span>Stations</span>
-            <span className="text-slate-400">{bible.stations.length}</span>
+            <span className="text-slate-400">{playbook.stations.length}</span>
           </div>
           <div className="flex justify-between">
             <span>Runtime</span>
-            <span className="text-slate-400">{bible.parameters.totalDurationMinutes} min</span>
+            <span className="text-slate-400">{playbook.parameters.totalDurationMinutes} min</span>
           </div>
           <div className="flex justify-between">
             <span>Dispatch</span>
-            <span className="text-slate-400">/{bible.parameters.dispatchIntervalMinutes} min</span>
+            <span className="text-slate-400">/{playbook.parameters.dispatchIntervalMinutes} min</span>
           </div>
           {isSaving && (
             <div className="flex items-center gap-1.5 text-slate-500 pt-1">

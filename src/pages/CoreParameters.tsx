@@ -1,5 +1,5 @@
 import { Settings } from 'lucide-react';
-import { useBibleStore } from '../lib/store';
+import { usePlaybookStore } from '../lib/store';
 import { ProjectParameters } from '../lib/types';
 
 function Field({
@@ -24,8 +24,8 @@ const inputCls =
   'w-full bg-slate-800/60 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-500 transition-colors';
 
 export default function CoreParameters() {
-  const { bible, updateParameters } = useBibleStore();
-  const { parameters } = bible;
+  const { playbook, updateParameters } = usePlaybookStore();
+  const { parameters } = playbook;
 
   const update = (key: keyof ProjectParameters, value: string | number) => {
     updateParameters({ [key]: value } as Partial<ProjectParameters>);

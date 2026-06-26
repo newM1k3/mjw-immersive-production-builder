@@ -4,15 +4,15 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import CoreParameters from './pages/CoreParameters';
 import StationFlow from './pages/StationFlow';
-import ExportBible from './pages/ExportBible';
-import { useBibleStore } from './lib/store';
+import ExportPlaybook from './pages/ExportPlaybook';
+import { usePlaybookStore } from './lib/store';
 import { pb } from './lib/pocketbase';
 import { resolveRoomContext, loadProduction, saveProduction } from './lib/production';
 
 export default function App() {
-  const { activeNav, bible, roomCtx, activeRoomId, setIsSaving, setBible, setRoomCtx, setActiveRoomId, setActiveNav } = useBibleStore();
+  const { activeNav, playbook, roomCtx, activeRoomId, setIsSaving, setPlaybook, setRoomCtx, setActiveRoomId, setActiveNav } = usePlaybookStore();
 
-  // SSO token handoff + resolve the venue's rooms, then load the active room's bible.
+  // SSO token handoff + resolve the venue's rooms, then load the active room's playbook.
   useEffect(() => {
     async function initApp() {
       const params = new URLSearchParams(window.location.search);
@@ -34,35 +34,35 @@ export default function App() {
       window.history.replaceState({}, '', window.location.pathname);
 
       const resolved = await resolveRoomContext();
-      if (!resolved) return; // not signed in / no venue → stays on the demo bible
+      if (!resolved) return; // not signed in / no venue → stays on the demo playbook
       setRoomCtx(resolved);
       setActiveNav('dashboard'); // already authed (cookie session) → skip landing
 
       const room = resolved.rooms.find((r) => r.id === roomParam) ?? resolved.rooms[0] ?? null;
       if (room) {
         setActiveRoomId(room.id);
-        setBible(await loadProduction(room));
+        setPlaybook(await loadProduction(room));
       }
     }
     void initApp();
-  }, [setRoomCtx, setActiveRoomId, setBible, setActiveNav]);
+  }, [setRoomCtx, setActiveRoomId, setPlaybook, setActiveNav]);
 
   // Auto-save when navigating to the export page
-  const persistBible = useCallback(async () => {
+  const persistPlaybook = useCallback(async () => {
     if (!pb.authStore.isValid || !roomCtx || !activeRoomId) return;
     setIsSaving(true);
     try {
-      await saveProduction(roomCtx, activeRoomId, bible);
+      await saveProduction(roomCtx, activeRoomId, playbook);
     } catch (err) {
-      console.warn('Production Bible Builder: save failed', err);
+      console.warn('Production Playbook Builder: save failed', err);
     } finally {
       setIsSaving(false);
     }
-  }, [bible, roomCtx, activeRoomId, setIsSaving]);
+  }, [playbook, roomCtx, activeRoomId, setIsSaving]);
 
   useEffect(() => {
     if (activeNav === 'export') {
-      void persistBible();
+      void persistPlaybook();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeNav]);
@@ -79,7 +79,7 @@ export default function App() {
         {activeNav === 'dashboard' && <Dashboard />}
         {activeNav === 'parameters' && <CoreParameters />}
         {activeNav === 'station-flow' && <StationFlow />}
-        {activeNav === 'export' && <ExportBible />}
+        {activeNav === 'export' && <ExportPlaybook />}
       </main>
     </div>
   );

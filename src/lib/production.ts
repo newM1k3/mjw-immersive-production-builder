@@ -1,17 +1,17 @@
 // production.ts — Immersive Production Builder on the unified spine (Phase 3).
 //
-// A production bible is a room-scoped drawer (tool_key=production_builder, scope=room). The room
+// A production playbook is a room-scoped drawer (tool_key=production_builder, scope=room). The room
 // is a platform `experiences` record, resolved via the user's org membership; its venue is the
-// parent `projects` record. On a brand-new bible the parameters are seeded from the room's Story
+// parent `projects` record. On a brand-new playbook the parameters are seeded from the room's Story
 // (experiences.title/duration/capacity) so it never starts blank. Replaces the retired per-user
 // `production_builder_projects` table.
 
 import pb from './pocketbase';
-import type { ProductionBible, ProjectParameters } from './types';
+import type { ProductionPlaybook, ProjectParameters } from './types';
 
 type Rec = Record<string, unknown>;
 
-/** A room the signed-in user can build a bible for, plus its raw Story fields for seeding. */
+/** A room the signed-in user can build a playbook for, plus its raw Story fields for seeding. */
 export interface RoomOption {
   id: string; // experiences record id
   title: string;
@@ -62,8 +62,8 @@ export async function resolveRoomContext(): Promise<RoomContext | null> {
   return null;
 }
 
-/** Seed a fresh production bible from a room's Story so it never starts blank. */
-export function seedFromRoom(e: Rec): ProductionBible {
+/** Seed a fresh production playbook from a room's Story so it never starts blank. */
+export function seedFromRoom(e: Rec): ProductionPlaybook {
   const parameters: ProjectParameters = {
     id: `proj-${Date.now()}`,
     title: (e.title as string) ?? '',
@@ -77,23 +77,23 @@ export function seedFromRoom(e: Rec): ProductionBible {
 }
 
 /**
- * Load the room's production-bible drawer, or a Story-seeded blank if none exists yet.
+ * Load the room's production-playbook drawer, or a Story-seeded blank if none exists yet.
  * One drawer per room (tool_key=production_builder, scope=room).
  */
-export async function loadProduction(room: RoomOption): Promise<ProductionBible> {
+export async function loadProduction(room: RoomOption): Promise<ProductionPlaybook> {
   try {
     const rec = await pb.collection('drawers').getFirstListItem(
       `tool_key = 'production_builder' && room = '${room.id}'`,
       { requestKey: null },
     );
-    return rec.data as ProductionBible;
+    return rec.data as ProductionPlaybook;
   } catch {
     return seedFromRoom(room.experience);
   }
 }
 
-/** Upsert the room's production-bible drawer (one row per room). Returns the drawer record id. */
-export async function saveProduction(ctx: RoomContext, roomId: string, bible: ProductionBible): Promise<string> {
+/** Upsert the room's production-playbook drawer (one row per room). Returns the drawer record id. */
+export async function saveProduction(ctx: RoomContext, roomId: string, playbook: ProductionPlaybook): Promise<string> {
   if (!pb.authStore.isValid) throw new Error('Must be signed in to save');
 
   const body = {
@@ -102,8 +102,8 @@ export async function saveProduction(ctx: RoomContext, roomId: string, bible: Pr
     organization: ctx.orgId,
     venue: ctx.venueId,
     room: roomId,
-    title: bible.parameters.title || 'Untitled Production',
-    data: { ...bible },
+    title: playbook.parameters.title || 'Untitled Production',
+    data: { ...playbook },
     status: 'active',
   };
 

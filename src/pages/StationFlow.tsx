@@ -26,7 +26,7 @@ import {
   AlertTriangle,
   Clock,
 } from 'lucide-react';
-import { useBibleStore } from '../lib/store';
+import { usePlaybookStore } from '../lib/store';
 import { Station } from '../lib/types';
 
 type EditorTab = 'story' | 'director' | 'ops';
@@ -270,7 +270,7 @@ function StationCard({
   onSelect: () => void;
   dispatchInterval: number;
 }) {
-  const { deleteStation } = useBibleStore();
+  const { deleteStation } = usePlaybookStore();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: station.id,
   });
@@ -344,8 +344,8 @@ function StationCard({
 }
 
 export default function StationFlow() {
-  const { bible, addStation, updateStation, reorderStations } = useBibleStore();
-  const { stations, parameters } = bible;
+  const { playbook, addStation, updateStation, reorderStations } = usePlaybookStore();
+  const { stations, parameters } = playbook;
   const [selectedId, setSelectedId] = useState<string | null>(stations[0]?.id ?? null);
   const [activeTab, setActiveTab] = useState<EditorTab>('story');
 
@@ -412,7 +412,7 @@ export default function StationFlow() {
             onClick={() => {
               addStation();
               setTimeout(() => {
-                const stations = useBibleStore.getState().bible.stations;
+                const stations = usePlaybookStore.getState().playbook.stations;
                 const last = stations[stations.length - 1];
                 if (last) setSelectedId(last.id);
               }, 50);

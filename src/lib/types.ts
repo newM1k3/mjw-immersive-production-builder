@@ -27,7 +27,7 @@ export interface Station {
   bottleneckRisk: 'Low' | 'Medium' | 'High';
 }
 
-export interface ProductionBible {
+export interface ProductionPlaybook {
   parameters: ProjectParameters;
   stations: Station[];
 }

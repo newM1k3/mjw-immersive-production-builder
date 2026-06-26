@@ -1,5 +1,5 @@
 import { Skull, Zap, GitBranch, BookOpen, AlertTriangle, ArrowRight, CheckCircle } from 'lucide-react';
-import { useBibleStore } from '../lib/store';
+import { usePlaybookStore } from '../lib/store';
 
 const features = [
   {
@@ -19,7 +19,7 @@ const features = [
   {
     icon: BookOpen,
     iconColor: 'text-sky-400',
-    title: 'Production Bible Export',
+    title: 'Production Playbook Export',
     description:
       'Generate a complete, unified production document — ready to share with your full team, from tech leads to actors.',
   },
@@ -42,7 +42,7 @@ const checklistItems = [
 ];
 
 export default function LandingPage() {
-  const { setActiveNav } = useBibleStore();
+  const { setActiveNav } = usePlaybookStore();
 
   const handleLaunch = () => {
     setActiveNav('dashboard');
@@ -68,7 +68,7 @@ export default function LandingPage() {
 
           <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6 tracking-tight">
             Build your{' '}
-            <span className="text-rose-400">Production Bible.</span>
+            <span className="text-rose-400">Production Playbook.</span>
             <br />
             Catch every bottleneck.
           </h1>
@@ -127,7 +127,7 @@ export default function LandingPage() {
       <section className="px-6 py-16 bg-slate-900/50">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-white">
-            A Production Bible that covers every angle
+            A Production Playbook that covers every angle
           </h2>
           <p className="text-slate-400 mb-10">
             Every station you design captures six critical dimensions, giving your entire team —
