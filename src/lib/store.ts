@@ -1,8 +1,8 @@
 import { create } from 'zustand';
-import { ProductionBible, ProjectParameters, Station } from './types';
+import { ProductionPlaybook, ProjectParameters, Station } from './types';
 import type { RoomContext } from './production';
 
-const dummyBible: ProductionBible = {
+const dummyPlaybook: ProductionPlaybook = {
   parameters: {
     id: 'proj-001',
     title: 'Project SkyHarvest',
@@ -114,14 +114,14 @@ const dummyBible: ProductionBible = {
   ],
 };
 
-interface BibleStore {
-  bible: ProductionBible;
+interface PlaybookStore {
+  playbook: ProductionPlaybook;
   activeNav: string;
   roomCtx: RoomContext | null;
   activeRoomId: string | null;
   isSaving: boolean;
   setActiveNav: (nav: string) => void;
-  setBible: (bible: ProductionBible) => void;
+  setPlaybook: (playbook: ProductionPlaybook) => void;
   setRoomCtx: (ctx: RoomContext | null) => void;
   setActiveRoomId: (id: string | null) => void;
   setIsSaving: (saving: boolean) => void;
@@ -132,30 +132,30 @@ interface BibleStore {
   reorderStations: (fromIndex: number, toIndex: number) => void;
 }
 
-export const useBibleStore = create<BibleStore>((set) => ({
-  bible: dummyBible,
+export const usePlaybookStore = create<PlaybookStore>((set) => ({
+  playbook: dummyPlaybook,
   activeNav: 'landing',
   roomCtx: null,
   activeRoomId: null,
   isSaving: false,
 
   setActiveNav: (nav) => set({ activeNav: nav }),
-  setBible: (bible) => set({ bible }),
+  setPlaybook: (playbook) => set({ playbook }),
   setRoomCtx: (roomCtx) => set({ roomCtx }),
   setActiveRoomId: (activeRoomId) => set({ activeRoomId }),
   setIsSaving: (isSaving) => set({ isSaving }),
 
   updateParameters: (params) =>
     set((state) => ({
-      bible: {
-        ...state.bible,
-        parameters: { ...state.bible.parameters, ...params },
+      playbook: {
+        ...state.playbook,
+        parameters: { ...state.playbook.parameters, ...params },
       },
     })),
 
   addStation: () =>
     set((state) => {
-      const newOrder = state.bible.stations.length + 1;
+      const newOrder = state.playbook.stations.length + 1;
       const newStation: Station = {
         id: `station-${Date.now()}`,
         order: newOrder,
@@ -172,18 +172,18 @@ export const useBibleStore = create<BibleStore>((set) => ({
         bottleneckRisk: 'Low',
       };
       return {
-        bible: {
-          ...state.bible,
-          stations: [...state.bible.stations, newStation],
+        playbook: {
+          ...state.playbook,
+          stations: [...state.playbook.stations, newStation],
         },
       };
     }),
 
   updateStation: (id, updates) =>
     set((state) => ({
-      bible: {
-        ...state.bible,
-        stations: state.bible.stations.map((s) =>
+      playbook: {
+        ...state.playbook,
+        stations: state.playbook.stations.map((s) =>
           s.id === id ? { ...s, ...updates } : s
         ),
       },
@@ -191,18 +191,18 @@ export const useBibleStore = create<BibleStore>((set) => ({
 
   deleteStation: (id) =>
     set((state) => {
-      const filtered = state.bible.stations
+      const filtered = state.playbook.stations
         .filter((s) => s.id !== id)
         .map((s, i) => ({ ...s, order: i + 1 }));
-      return { bible: { ...state.bible, stations: filtered } };
+      return { playbook: { ...state.playbook, stations: filtered } };
     }),
 
   reorderStations: (fromIndex, toIndex) =>
     set((state) => {
-      const stations = [...state.bible.stations];
+      const stations = [...state.playbook.stations];
       const [moved] = stations.splice(fromIndex, 1);
       stations.splice(toIndex, 0, moved);
       const reordered = stations.map((s, i) => ({ ...s, order: i + 1 }));
-      return { bible: { ...state.bible, stations: reordered } };
+      return { playbook: { ...state.playbook, stations: reordered } };
     }),
 }));

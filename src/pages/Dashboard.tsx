@@ -1,5 +1,5 @@
 import { AlertTriangle, CheckCircle, Clock, Users, DollarSign, Timer, TrendingUp, Layers, Zap, Shield } from 'lucide-react';
-import { useBibleStore } from '../lib/store';
+import { usePlaybookStore } from '../lib/store';
 import { Station } from '../lib/types';
 
 function RiskBadge({ risk }: { risk: Station['bottleneckRisk'] }) {
@@ -50,8 +50,8 @@ function StatCard({
 }
 
 export default function Dashboard() {
-  const { bible, setActiveNav } = useBibleStore();
-  const { parameters, stations } = bible;
+  const { playbook, setActiveNav } = usePlaybookStore();
+  const { parameters, stations } = playbook;
 
   const conflicts = stations.filter(
     (s) => s.resetTimeMinutes >= parameters.dispatchIntervalMinutes
